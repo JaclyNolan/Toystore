@@ -25,7 +25,7 @@ session_start();
 
 <body>
     <?php
-    $connect = mysqli_connect('localhost', 'root', '', 'Defko_Music');
+    include('Admin/connect.php');
     // if ($connect) {
     //     echo "Successful connection";
     // } else {

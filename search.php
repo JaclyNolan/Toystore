@@ -18,7 +18,7 @@ session_start();
 
 <body>
 	<?php
-	$connect = mysqli_connect('localhost', 'root', "", "defko_music");
+	include('Admin/connect.php');
 	?>
 	<!-- menu -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">

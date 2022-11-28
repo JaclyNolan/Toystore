@@ -18,19 +18,19 @@ session_start();
 
 <body>
 	<?php
-	$connect = mysqli_connect('localhost', 'root', "", "defko_music");
+	include('Admin/connect.php');
 	?>
 	<!-- menu -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<div class="container">
-			<a class="navbar-brand" href="index.php">Defko</a>
+			<a class="navbar-brand" href="index.php">Defko Toys</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
+				<li class="nav-item active">
 						<a class="nav-link" href="#"> Home <span class="glyphicon glyphicon-home sr-only">(current)</span></a>
 					</li>
 					<li class="nav-item">
@@ -54,10 +54,10 @@ session_start();
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="search">Search</button>
 				</form>
 				<?php
-					if (isset($_POST['search'])) {
-						$search_input = $_POST['search_input'];
-						echo "<script>window.open('search.php?search=$search_input','_self')</script>";
-					}
+				if (isset($_POST['search'])) {
+					$search_input = $_POST['search_input'];
+					echo "<script>window.open('search.php?search=$search_input','_self')</script>";
+				}
 				?>
 				<div>
 					<?php
@@ -75,17 +75,17 @@ session_start();
 							$image_url = 'Image\User_Image\\' . $avatar;
 						}
 						echo "<div class='dropdown show'>
-						<a class='btn btn-outline-dark dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+						<a class='btn btn-outline-dark dropdown-toggle' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
 							<img class='user-avatar' src='" . $image_url . "'>
 							<span class=user-name>" . $_SESSION['username'] . "</span>
 						</a>
 
-						<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+						<div class='dropdown-content' aria-labelledby='dropdownMenuLink'>
 							<a class='dropdown-item' href='user.php'>Account</a>
 							<a class='dropdown-item' href='cart.php'>Cart</a>";
 						// how do I make this more secure??? it is pretty shit I rely entirely on session for the authentication
 						if ($role == "admin") {
-							echo "<a class='dropdown-item' href='Admin/Songs/song.php'>Admin</a>";
+							echo "<a class='dropdown-item' href='Admin/Toys/toy.php'>Admin</a>";
 						}
 						echo "<div class='dropdown-divider'></div>
 							<a class='dropdown-item' href='logout.php'>Logout</a>
@@ -108,20 +108,21 @@ session_start();
 		</ol>
 		<div class="carousel-inner">
 			<?php
-			function correctString(string $name) {
-            $i = 0;
-            while ($i < strlen($name)) {
-                if ($name[$i] == "'") {
-                    for ($j = strlen($name); $j > $i; $j--) {
-                        $name[$j] = $name[$j - 1];
-                    }
-                    $name[$i] = "\\";
-                    $i++;
-                }
-                $i++;
-            }
-            return $name;
-        }
+			function correctString(string $name)
+			{
+				$i = 0;
+				while ($i < strlen($name)) {
+					if ($name[$i] == "'") {
+						for ($j = strlen($name); $j > $i; $j--) {
+							$name[$j] = $name[$j - 1];
+						}
+						$name[$i] = "\\";
+						$i++;
+					}
+					$i++;
+				}
+				return $name;
+			}
 			$slide_image_path = "Image\Slide_Image";
 			$sql = "SELECT * FROM slide";
 			$slide_result = mysqli_query($connect, $sql);
@@ -133,7 +134,7 @@ session_start();
 								$bool = false;
 							} else echo "'" . "carousel-item" . "'";
 							?>>
-					<img class="d-block w-100" src=<?php echo "'" . $slide_image_path . "\\" . $slide["slide_image"] . "'" ?> alt=<?php echo $slide["slide_id"] ?>>
+					<img style="width: 300px;" class="d-block w-100" src=<?php echo "'" . $slide_image_path . "\\" . $slide["slide_image"] . "'" ?> alt=<?php echo $slide["slide_id"] ?>>
 				</div>
 			<?php
 			};
@@ -152,46 +153,26 @@ session_start();
 	<!-- list product -->
 	<div class="container">
 		<div class="row mt-5">
-			<h2 class="list-product-title">Featured songs</h2>
+			<h2 class="list-product-title">Featured toys</h2>
 			<div class="list-product-subtitle">
-				<p>Top songs in 2022</p>
+				<p>Top toys in 2022</p>
 			</div>
 			<div class="product-group">
 				<div class="row">
 					<?php
 					if ($connect) {
-						$song_image_path = "Image\Song_Image";
-						$song_audio_path = "Audio";
-						$singer_image_path = "Image\Singer_Image";
-						$sql = "SELECT * FROM song";
-						$song_result = mysqli_query($connect, $sql);
-						while ($song = mysqli_fetch_array($song_result)) {
-							$sql = "SELECT * FROM singer WHERE singer_id = '$song[singer_id]'";
-							$singer_result = mysqli_query($connect, $sql);
-							$singer = mysqli_fetch_array($singer_result);
-							$song_audio = correctString($song['song_audio']);
+						$toy_image_path = "Image\Toy_Image";
+						$sql = "SELECT * FROM toy";
+						$toy_result = mysqli_query($connect, $sql);
+						while ($toy = mysqli_fetch_array($toy_result)) {
 					?>
 							<div class="col-md-3 col-sm-6 col-12">
 								<div class="card card-product mb-3">
-									<img class="card-img-top" src=<?php echo "'" . $song_image_path . "\\" . $song['song_img'] . "'" ?> alt=<?php echo $song['song_name'] ?>>
+									<img class="card-img-top" src=<?php echo "'" . $toy_image_path . "\\" . $toy['image'] . "'" ?> alt=<?php echo $toy['image'] ?>>
 									<div class="card-body">
-										<h5 class="card-title"><?php echo $song['song_name'] ?></h5>
-										<p class="card-text">by <?php echo $singer['singer_name'] ?>. </p>
-										<p>
-											<audio controls controlsList="nodownload" style="width: 250px;" ontimeupdate="myAudio(this)">
-												<source src=<?php echo "'" . $song_audio_path . "\\" . $song_audio . "'" ?> type="audio/mpeg">
-											</audio>
-											<script type="text/javascript">
-												function myAudio(event) {
-													if (event.currentTime > 30) {
-														event.currentTime = 0;
-														event.pause();
-														alert("Buy premium to enjoy the rest of the song!")
-													}
-												}
-											</script>
-										</p>
-										<a href="detail.php?id=<?php echo $song['song_id'] ?>" class="btn btn-primary">Details</a>
+										<h5 class="card-title"><?php echo $toy['name'] ?></h5>
+										<p class="card-text">Price: <?php echo $toy['price'] ?>VND </p>
+										<a href="detail.php?id=<?php echo $toy['id'] ?>" class="btn btn-primary">Details</a>
 									</div>
 								</div>
 							</div>

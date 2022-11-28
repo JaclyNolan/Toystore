@@ -22,7 +22,7 @@ if ($user['role'] == "admin") {
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
         <!--Custom styles-->
-        <link rel="stylesheet" href="song.css">
+        <link rel="stylesheet" href="toy.css">
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
         <!--
 	Product Admin CSS Template
@@ -45,13 +45,13 @@ if ($user['role'] == "admin") {
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto h-100">
                         <li class="nav-item">
-                            <a class="nav-link active" href="../Songs/song.php">
+                            <a class="nav-link active" href="../Toys/toy.php">
                                 <i class="fas fa-music"></i> Songs
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link" href="../Singers/singer.php">
-                                <i class="fas fa-microphone"></i> Singers
+                            <a class="nav-link" href="../Providers/provider.php">
+                                <i class="fas fa-microphone"></i> Providers
                             </a>
                         </li>
                         <li class="nav-item">
@@ -91,7 +91,7 @@ if ($user['role'] == "admin") {
 							<a class='dropdown-item' href='cart.php'>Cart</a>";
                             // how do I make this more secure??? it is pretty shit I rely entirely on session for the authentication
                             if ($role == "admin") {
-                                echo "<a class='dropdown-item' href='Admin/Songs/song.php'>Admin</a>";
+                                echo "<a class='dropdown-item' href='Admin/Songs/toy.php'>Admin</a>";
                             }
                             echo "<div class='dropdown-divider'></div>
 							<a class='dropdown-item' href='logout.php'>Logout</a>
@@ -113,46 +113,44 @@ if ($user['role'] == "admin") {
                                         <tr>
                                             <th scope="col">&nbsp;</th>
                                             <th scope="col">SONG NAME</th>
-                                            <th scope="col">AUTHOR</th>
+                                            <th scope="col">PROVIDER</th>
                                             <th scope="col">GENRE</th>
                                             <th scope="col">PRICE</th>
                                             <th scope="col">IMAGE</th>
-                                            <th scope="col">AUDIO</th>
                                             <th scope="col">&nbsp;</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         if ($connect) {
-                                            $sql = "SELECT * FROM song";
+                                            $sql = "SELECT * FROM toy";
                                             $result = mysqli_query($connect, $sql);
-                                            while ($song = mysqli_fetch_array($result)) {
-                                                $song_id = $song['song_id'];
-                                                $singer_id = $song['singer_id'];
-                                                $genre_id = $song['genre_id'];
-                                                $sql = "SELECT singer_name FROM singer WHERE singer_id = '$singer_id'";
-                                                $singer = mysqli_fetch_array(mysqli_query($connect, $sql));
+                                            while ($toy = mysqli_fetch_array($result)) {
+                                                $toy_id = $toy['id'];
+                                                $provider_id = $toy['provider_id'];
+                                                $genre_id = $toy['genre_id'];
+                                                $sql = "SELECT name FROM provider WHERE id = '$provider_id'";
+                                                $provider = mysqli_fetch_array(mysqli_query($connect, $sql));
                                                 $sql = "SELECT genre_name FROM genre WHERE genre_id = '$genre_id'";
                                                 $genre = mysqli_fetch_array(mysqli_query($connect, $sql));
                                         ?>
                                                 <tr>
-                                                    <th scope="row"><input type="checkbox" name="song_check_list[]" value="<?php echo $song_id ?>" /></th>
-                                                    <td class="tm-product-name"><?php echo $song['song_name'] ?></td>
-                                                    <td><?php echo $singer['singer_name'] ?></td>
+                                                    <th scope="row"><input type="checkbox" name="toy_check_list[]" value="<?php echo $toy_id ?>" /></th>
+                                                    <td class="tm-product-name"><?php echo $toy['name'] ?></td>
+                                                    <td><?php echo $provider['name'] ?></td>
                                                     <td><?php echo $genre['genre_name'] ?></td>
-                                                    <td><?php echo $song['song_price'] ?></td>
-                                                    <td><?php echo $song['song_img'] ?></td>
-                                                    <td><?php echo $song['song_audio'] ?></td>
+                                                    <td><?php echo $toy['price'] ?></td>
+                                                    <td><?php echo $toy['image'] ?></td>
                                                     <td>
-                                                        <button class="tm-product-delete-link" type="submit" name="<?php echo 'edit-button-' . $song_id ?>">
+                                                        <button class="tm-product-delete-link" type="submit" name="<?php echo 'edit-button-' . $toy_id ?>">
                                                             <i class="fas fa-wrench tm-product-delete-icon"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
                                         <?php
-                                                if (isset($_POST['edit-button-' . $song_id])) {
-                                                    $_SESSION['song_id'] = $song_id;
-                                                    echo "<script>window.open('edit-song.php','_self')</script>";
+                                                if (isset($_POST['edit-button-' . $toy_id])) {
+                                                    $_SESSION['toy_id'] = $toy_id;
+                                                    echo "<script>window.open('edit-toy.php','_self')</script>";
                                                 }
                                             }
                                         }
@@ -161,22 +159,22 @@ if ($user['role'] == "admin") {
                                 </table>
                             </div>
                             <!-- table container -->
-                            <a href="add-songs.php" class="btn btn-primary btn-block text-uppercase mb-3">Add new song</a>
+                            <a href="add-toys.php" class="btn btn-primary btn-block text-uppercase mb-3">Add new toy</a>
                             <button class="btn btn-primary btn-block text-uppercase" name="delete-button">
-                                Delete selected song
+                                Delete selected toy
                             </button>
                             <?php
                             if (isset($_POST['delete-button'])) {
-                                if (!empty($_POST['song_check_list'])) {
+                                if (!empty($_POST['toy_check_list'])) {
                                     // Counting number of checked checkboxes.
-                                    $checked_count = count($_POST['song_check_list']);
+                                    $checked_count = count($_POST['toy_check_list']);
                                     // Loop to store and display values of individual checked checkbox.
-                                    foreach ($_POST['song_check_list'] as $song_id) {
-                                        $sql = "DELETE FROM song WHERE song_id = $song_id";
+                                    foreach ($_POST['toy_check_list'] as $toy_id) {
+                                        $sql = "DELETE FROM toy WHERE toy_id = $toy_id";
                                         $result = mysqli_query($connect, $sql);
                                     }
                                     echo "<script>alert('You have deleted the folllowing " . $checked_count . " option(s)')</script>";
-                                    echo "<script>window.open('song.php','_self')</script>";
+                                    echo "<script>window.open('toy.php','_self')</script>";
                                     //echo "<br/><b>Note :</b> <span>Similarily, You Can Also Perform CRUD Operations using These Selected Values.</span>";
                                 } else {
                                     //echo "<b>Please Select Atleast One Option.</b>";
